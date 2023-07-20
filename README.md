@@ -6,9 +6,9 @@
 
 __ЯП: TypeScript / JavaScript__
 
-__Технологии: Koa.js, Sequelize.js, Axios.js roa-router.js__
+__Технологии: Koa.js, Sequelize.js, Axios.js koa-router.js__
 
-__Инфраструктура: Node.js, Docker, Docker compose__
+__Инфраструктура: Node.js, Docker, Docker compose (минимально - .env-файл, который показывает все настройки приложения)__
 
 
 ### Задача:
