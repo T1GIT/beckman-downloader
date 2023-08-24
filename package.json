@@ -1,0 +1,39 @@
+{
+  "name": "beckman-downloader",
+  "private": true,
+  "scripts": {
+    "start:dev": "cross-env NODE_ENV=development nodemon src/app.ts --watch src -e ts",
+    "start:prod": "cross-env NODE_ENV=production node dist/app",
+    "build": "cross-env NODE_ENV=production tsc",
+    "lint": "eslint . --fix",
+    "format": "prettier . --write"
+  },
+  "dependencies": {
+    "koa": "^2.14.2",
+    "koa-bodyparser": "^4.4.1",
+    "koa-router": "^12.0.0",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "reflect-metadata": "^0.1.13",
+    "sequelize": "^6.32.1",
+    "sequelize-typescript": "^2.1.5"
+  },
+  "devDependencies": {
+    "@types/http-status-codes": "^1.2.0",
+    "@types/koa": "^2.13.8",
+    "@types/koa-bodyparser": "^4.3.10",
+    "@types/koa-router": "^7.4.4",
+    "@types/node": "^20.5.4",
+    "@typescript-eslint/eslint-plugin": "^5.59.0",
+    "@typescript-eslint/parser": "^5.59.0",
+    "cross-env": "^7.0.3",
+    "eslint": "8.38.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^2.8.7",
+    "ts-dotenv": "^0.9.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
