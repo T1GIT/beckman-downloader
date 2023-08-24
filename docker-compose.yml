@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: $PG_USERNAME
+      POSTGRES_PASSWORD: $PG_PASSWORD
+      POSTGRES_DB: main
+    ports:
+      - "${PG_PORT}:5432"
