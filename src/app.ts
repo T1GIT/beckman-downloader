@@ -6,11 +6,9 @@ import { initDocumentsModule } from './modules/documents';
 
 const app = new Koa();
 
-async function start() {
+(() => {
   initCoreModule(app);
   initSharedModule(app);
   initDocumentsModule(app);
   initCrawlerModule(app);
-}
-
-start();
+})();
