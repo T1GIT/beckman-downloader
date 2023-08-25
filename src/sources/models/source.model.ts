@@ -1,15 +1,10 @@
-import { Column, Model, Table } from 'sequelize-typescript';
-
-export interface SourceModelCreate extends Pick<SourceModel, 'url'> {}
+import { Column, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
 @Table
-export class SourceModel
-  extends Model<SourceModelCreate>
-  implements SourceModelCreate
-{
-  @Column
+export class SourceModel extends Model<SourceModel, Pick<SourceModel, 'url'>> {
+  @Column({ allowNull: false })
   url: string;
 
-  @Column({ allowNull: true })
+  @Column
   last_total?: number;
 }

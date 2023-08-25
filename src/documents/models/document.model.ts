@@ -1,22 +1,19 @@
 import { Column, Model, Table } from 'sequelize-typescript';
 
-export interface DocumentModelCreate
-  extends Pick<DocumentModel, 'name' | 'ref' | 'document' | 'released'> {}
-
 @Table
-export class DocumentModel
-  extends Model<DocumentModelCreate>
-  implements DocumentModelCreate
-{
-  @Column
+export class DocumentModel extends Model<
+  DocumentModel,
+  Pick<DocumentModel, 'name' | 'ref' | 'document' | 'released'>
+> {
+  @Column({ allowNull: false })
   name: string;
 
-  @Column({ allowNull: true })
+  @Column
   ref?: string;
 
-  @Column
+  @Column({ allowNull: false })
   document: string;
 
-  @Column
+  @Column({ allowNull: false })
   released: Date;
 }

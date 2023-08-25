@@ -1,7 +1,7 @@
 import { DefaultJobOptions, Queue } from 'bullmq';
 import { QueueName } from '../constants/queue-name';
 import { TaskName } from '../constants/task-name';
-import { RefreshPayload } from '../dto/refresh-payload';
+import { RefreshPayload } from '../types/refresh-payload';
 import { connectionOptions } from '../constants/connection-options';
 
 const queue = new Queue(QueueName.CRAWLER, {

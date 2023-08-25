@@ -6,6 +6,6 @@ export const crawlerModule: Module = {
   async init() {
     setUpWorker();
 
-    queueService.watch();
+    await queueService.watch();
   },
 };
