@@ -1,5 +1,4 @@
 import Application from 'koa';
+import { Module } from '../core/types/module';
 
-export function initSharedModule(app: Application) {
-
-}
+export const sharedModule: Module = {};

@@ -1,3 +1,3 @@
-import Application from 'koa';
+import { Module } from '../core/types/module';
 
-export function initCrawlerModule(app: Application) {}
+export const crawlerModule: Module = {};

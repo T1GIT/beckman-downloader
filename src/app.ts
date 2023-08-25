@@ -1,14 +1,10 @@
 import Koa from 'koa';
-import { initCoreModule } from './core';
-import { initCrawlerModule } from './crawler';
-import { initSharedModule } from './shared';
-import { initDocumentsModule } from './documents';
+import { coreModule } from './core';
+import { crawlerModule } from './crawler';
+import { sharedModule } from './shared';
+import { documentsModule } from './documents';
+import { initModules } from './core/utils/init-modules';
 
 const app = new Koa();
 
-(() => {
-  initCoreModule(app);
-  initSharedModule(app);
-  initDocumentsModule(app);
-  initCrawlerModule(app);
-})();
+initModules(app, [coreModule, sharedModule, documentsModule, crawlerModule]);

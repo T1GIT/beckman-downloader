@@ -1,15 +1,8 @@
-import Application from 'koa';
 import { documentsController } from './controllers/documents.controller';
-import { connection } from '../core/utils/database';
 import { DocumentModel } from './models/document.model';
+import { Module } from '../core/types/module';
 
-export function initDocumentsModule(app: Application) {
-  const routers = [documentsController];
-  routers.forEach((router) => {
-    app.use(router.routes());
-    app.use(router.allowedMethods());
-  });
-
-  const models = [DocumentModel];
-  connection.addModels(models);
-}
+export const documentsModule: Module = {
+  controllers: [documentsController],
+  models: [DocumentModel],
+};
