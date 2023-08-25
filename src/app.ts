@@ -1,8 +1,8 @@
 import Koa from 'koa';
-import { initCoreModule } from './modules/core';
-import { initCrawlerModule } from './modules/crawler';
-import { initSharedModule } from './modules/shared';
-import { initDocumentsModule } from './modules/documents';
+import { initCoreModule } from './core';
+import { initCrawlerModule } from './crawler';
+import { initSharedModule } from './shared';
+import { initDocumentsModule } from './documents';
 
 const app = new Koa();
 
