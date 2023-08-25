@@ -11,11 +11,15 @@ const schema = {
   PG_NAME: String,
   PG_HOST: String,
   PG_PORT: Number,
+  // REDIS
+  REDIS_HOST: String,
+  REDIS_PORT: Number,
+  REDIS_PASSWORD: String,
 };
 
 export type Env = EnvType<typeof schema>;
 
-export function getEnvPath(): string | undefined {
+function getEnvPath(): string | undefined {
   const nodeEnv = process.env.NODE_ENV;
   const queue = [
     `.env.${nodeEnv}`,

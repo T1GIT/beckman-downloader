@@ -8,4 +8,5 @@ export const connection = new Sequelize({
   password: env.PG_PASSWORD,
   host: env.PG_HOST,
   port: env.PG_PORT,
+  logging: false,
 });

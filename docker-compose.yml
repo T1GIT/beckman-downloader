@@ -9,3 +9,10 @@ services:
       POSTGRES_DB: main
     ports:
       - "5432:5432"
+
+  redis:
+    image: redis:alpine
+    environment:
+      REDIS_PASSWORD: 1234
+    ports:
+      - "6379:6379"
