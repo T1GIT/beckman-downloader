@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize-typescript';
-import { env } from './env';
+import { env } from '../../shared/utils/env';
 
 export const connection = new Sequelize({
   database: env.PG_NAME,

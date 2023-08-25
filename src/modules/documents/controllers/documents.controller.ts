@@ -6,8 +6,11 @@ export const documentsController = new Router();
 documentsController.get('/documents', async (ctx) => {
   const { offset, limit } = ctx.query;
 
-  ctx.body = await documentsService.getAll(
+  const documents = await documentsService.getAll(
     offset && Number(offset),
     limit && Number(limit),
   );
+
+  ctx.body = documents;
+  ctx.status = 200;
 });
