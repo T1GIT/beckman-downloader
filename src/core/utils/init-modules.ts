@@ -24,7 +24,7 @@ export async function initModules(
   });
 
   const inits = modules.map((m) => m.init).filter(Boolean);
-  await Promise.all(inits.map((i) => i(app)));
+  await Promise.all(inits.map((i) => i()));
 
   app.listen(5000, async () => {
     console.log(`App has been started in ${process.env.NODE_ENV} mode`);

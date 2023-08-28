@@ -5,5 +5,5 @@ import Application from 'koa';
 export interface Module<M extends Model = any> {
   controllers?: Router[];
   models?: M[];
-  init?: (app: Application) => Promise<void> | void;
+  init?: () => Promise<void> | void;
 }

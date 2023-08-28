@@ -6,9 +6,11 @@ import { documentsModule } from './documents';
 import { initModules } from './core/utils/init-modules';
 import { sourcesModule } from './sources';
 import bodyParser from 'koa-bodyparser';
+import logger from 'koa-logger';
 
 const app = new Koa();
 app.use(bodyParser());
+app.use(logger());
 
 initModules(app, [
   coreModule,
