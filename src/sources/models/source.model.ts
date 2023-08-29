@@ -7,16 +7,19 @@ import {
 } from 'sequelize-typescript';
 import { DocumentModel } from '../../documents/models/document.model';
 
-@Table
+@Table({ timestamps: false })
 export class SourceModel extends Model<SourceModel, Pick<SourceModel, 'url'>> {
   @Column({ allowNull: false })
   url: string;
 
   @Column
-  last_total?: number;
+  total?: number;
 
   @Column({ defaultValue: false })
   refreshing: boolean;
+
+  @Column
+  refreshed_at?: Date;
 
   @HasMany(() => DocumentModel)
   documents: DocumentModel[];

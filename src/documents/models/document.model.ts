@@ -7,7 +7,7 @@ import {
 } from 'sequelize-typescript';
 import { SourceModel } from '../../sources/models/source.model';
 
-@Table
+@Table({ timestamps: false })
 export class DocumentModel extends Model<
   DocumentModel,
   Pick<

@@ -50,12 +50,19 @@ export const sourcesService = {
     return updated.toJSON();
   },
 
-  async setRefreshing(id: number, refreshing: boolean): Promise<void> {
-    await SourceModel.update({ refreshing }, { where: { id } });
+  async setTotal(id: number, total: number): Promise<void> {
+    await SourceModel.update({ total }, { where: { id } });
   },
 
-  async setLastTotal(id: number, lastTotal: number): Promise<void> {
-    await SourceModel.update({ last_total: lastTotal }, { where: { id } });
+  async startRefreshing(id: number): Promise<void> {
+    await SourceModel.update({ refreshing: true }, { where: { id } });
+  },
+
+  async finishRefreshing(id: number): Promise<void> {
+    await SourceModel.update(
+      { refreshing: false, refreshed_at: new Date() },
+      { where: { id } },
+    );
   },
 
   async remove(id: number): Promise<void> {

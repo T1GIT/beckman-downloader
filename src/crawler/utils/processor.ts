@@ -31,9 +31,13 @@ const handlers = {
   async [TaskName.REFRESH](job: Job) {
     const { source_id } = job.data as RefreshPayload;
 
-    return await crawlerService.refreshSource(source_id, 1000, (progress) =>
-      job.updateProgress(progress),
+    const documents = await crawlerService.refreshSource(
+      source_id,
+      500,
+      (progress) => job.updateProgress(progress),
     );
+
+    documents.length;
   },
 };
 

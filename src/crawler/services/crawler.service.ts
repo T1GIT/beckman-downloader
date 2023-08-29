@@ -14,7 +14,7 @@ export const crawlerService = {
     const needRefreshSources: InferAttributes<SourceModel>[] = [];
     for (const source of sources) {
       const { total } = await beckmanService.getAll(source.url, 0, 1);
-      if (source.refreshing || total > (source.last_total ?? 0)) {
+      if (!source.refreshing && total > (source.total ?? 0)) {
         needRefreshSources.push(source);
       }
     }
@@ -24,21 +24,23 @@ export const crawlerService = {
 
   async refreshSource(
     sourceId: number,
-    batchSize: number = 1000,
+    batchSize: number = 500,
     progressFn?: (progress: number) => void | Promise<void>,
   ): Promise<InferAttributes<DocumentModel>[]> {
     const source = await sourcesService.getById(sourceId);
-    const { total } = await beckmanService.getAll(source.url, 0, 1);
+    const beckman = await beckmanService.getAll(source.url, 0, 1);
 
-    if (!source.refreshing) {
-      await sourcesService.setRefreshing(sourceId, true);
+    if (source.refreshing) {
+      return [];
     }
 
-    const firstPage = Math.floor(source.last_total / batchSize);
-    const lastPage = Math.floor(total / batchSize);
+    await sourcesService.startRefreshing(sourceId);
 
-    const addedDocuments: InferAttributes<DocumentModel>[] = [];
-    for (let page = firstPage; page <= lastPage; page++) {
+    const first = Math.floor(source.total / batchSize);
+    const last = Math.floor(beckman.total / batchSize);
+
+    const added: InferAttributes<DocumentModel>[] = [];
+    for (let page = first; page <= last; page++) {
       const { results } = await beckmanService.getAll(
         source.url,
         page,
@@ -49,22 +51,19 @@ export const crawlerService = {
         .map((d) => ({ ...d, source_id: sourceId }));
 
       const candidates =
-        page === 0 ? documents.slice(source.last_total % batchSize) : documents;
+        page === 0 ? documents.slice(source.total % batchSize) : documents;
       const created = await documentsService.createMany(candidates);
-      addedDocuments.push(...created);
+      added.push(...created);
 
-      const newTotal =
-        source.last_total -
-        (source.last_total % batchSize) +
-        (page - firstPage + 1) * batchSize;
-      await sourcesService.setLastTotal(sourceId, newTotal);
+      await sourcesService.setTotal(sourceId, source.total + added.length);
 
-      const progress = (page - firstPage + 1) / (lastPage - firstPage + 1);
+      const progress =
+        Math.round(((page - first + 1) / (last - first + 1)) * 1000) / 1000;
       await progressFn(progress);
     }
 
-    await sourcesService.setRefreshing(sourceId, false);
+    await sourcesService.finishRefreshing(sourceId);
 
-    return addedDocuments;
+    return added;
   },
 };
