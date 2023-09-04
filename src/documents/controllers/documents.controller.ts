@@ -1,9 +1,9 @@
 import Router from 'koa-router';
 import { documentsService } from '../services/documents.service';
-import Joi from 'joi';
 import { documentSchema } from '../dto/document.dto';
 import { documentPageableSchema } from '../dto/document-pageable.dto';
 import { sourcesService } from '../../sources/services/sources.service';
+import { Readable } from 'stream';
 
 export const documentsController = new Router();
 
@@ -18,6 +18,36 @@ documentsController.get('/documents', async (ctx) => {
   ctx.body = documentPageableSchema.validate(documents, {
     stripUnknown: true,
   }).value;
+  ctx.status = 200;
+});
+
+documentsController.get('/documents/:documentId', async (ctx) => {
+  const { documentId } = ctx.params;
+  if (!(await documentsService.existsById(Number(documentsService)))) {
+    ctx.body = 'Document not found';
+    ctx.status = 404;
+    return;
+  }
+
+  const document = await documentsService.getById(Number(documentId));
+
+  ctx.body = documentSchema.validate(document, { stripUnknown: true });
+  ctx.status = 200;
+});
+
+documentsController.get('/documents/:documentId/file', async (ctx) => {
+  const { documentId } = ctx.params;
+  if (!(await documentsService.existsById(Number(documentsService)))) {
+    ctx.body = 'Document not found';
+    ctx.status = 404;
+    return;
+  }
+
+  const document = await documentsService.getById(Number(documentId));
+  const file = await documentsService.getFileById(Number(documentId));
+
+  ctx.attachment(`${document.external_id}.pdf`);
+  ctx.body = Readable.from(file);
   ctx.status = 200;
 });
 

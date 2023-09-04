@@ -8,9 +8,9 @@ import {
 import { DocumentModel } from '../../documents/models/document.model';
 
 @Table({ timestamps: false })
-export class SourceModel extends Model<SourceModel, Pick<SourceModel, 'url'>> {
+export class SourceModel extends Model<SourceModel, Pick<SourceModel, 'path'>> {
   @Column({ allowNull: false })
-  url: string;
+  path: string;
 
   @Column
   total?: number;

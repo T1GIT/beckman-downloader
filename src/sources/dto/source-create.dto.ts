@@ -1,9 +1,11 @@
 import Joi from 'joi';
 
 export interface SourceCreateDto {
-  url: string;
+  path: string;
 }
 
 export const sourceCreateSchema = Joi.object<SourceCreateDto>().keys({
-  url: Joi.string().uri().required(),
+  path: Joi.string()
+    .uri({ allowRelative: true, relativeOnly: true })
+    .required(),
 });

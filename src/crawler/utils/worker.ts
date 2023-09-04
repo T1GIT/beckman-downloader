@@ -13,6 +13,9 @@ export function setUpWorker() {
     connection: connectionOptions,
     autorun: true,
     concurrency: 50,
+    removeOnComplete: {
+      count: 1000,
+    },
   });
 
   worker.on('active', (job) =>
@@ -36,9 +39,9 @@ export function setUpWorker() {
       )} has been completed. Result is ${JSON.stringify(result)}`,
     ),
   );
-  worker.on('error', (error) =>
-    console.log(`Error caused ${JSON.stringify(error)}`),
-  );
+  // worker.on('error', (error) =>
+  //   console.log(`Error caused ${JSON.stringify(error)}`),
+  // );
 
   return worker;
 }

@@ -4,6 +4,7 @@ import {
   Model,
   Table,
   BelongsTo,
+  DataType,
 } from 'sequelize-typescript';
 import { SourceModel } from '../../sources/models/source.model';
 
@@ -22,6 +23,7 @@ export class DocumentModel extends Model<
     | 'document_number'
     | 'released_date'
     | 'url'
+    | 'file'
     | 'source_id'
   >
 > {
@@ -54,6 +56,9 @@ export class DocumentModel extends Model<
 
   @Column({ allowNull: false })
   url: string;
+
+  @Column({ type: DataType.BLOB, allowNull: false })
+  file: Buffer;
 
   @ForeignKey(() => SourceModel)
   @Column({ allowNull: false })

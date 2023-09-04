@@ -24,6 +24,12 @@ export const sourcesService = {
     };
   },
 
+  async getAllByRefreshing(
+    refreshing: boolean,
+  ): Promise<InferAttributes<SourceModel>[]> {
+    return SourceModel.findAll({ where: { refreshing }, raw: true });
+  },
+
   async getById(
     id: number,
     transaction?: Transaction,

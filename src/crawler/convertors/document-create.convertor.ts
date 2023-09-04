@@ -5,7 +5,7 @@ import { DocumentModel } from '../../documents/models/document.model';
 export const documentCreateConvertor = {
   fromBeckmanDocument(
     value: BeckmanDocument,
-  ): Omit<CreationAttributes<DocumentModel>, 'source_id'> {
+  ): Omit<CreationAttributes<DocumentModel>, 'source_id' | 'file'> {
     return {
       title: value.title,
       external_id: value.id,

@@ -1,17 +1,22 @@
 import { DocumentModel } from '../models/document.model';
-import {
-  CreationAttributes,
-  InferAttributes,
-  InferCreationAttributes,
-} from 'sequelize';
+import { CreationAttributes, InferAttributes } from 'sequelize';
 import { Pageable } from '../../shared/types/pageable';
 
 export const documentsService = {
+  async existsById(id: number): Promise<boolean> {
+    return (await DocumentModel.count({ where: { id } })) > 0;
+  },
+
   async getAll(
     offset?: number,
     limit?: number,
   ): Promise<Pageable<InferAttributes<DocumentModel>>> {
-    const data = await DocumentModel.findAll({ limit, offset, raw: true });
+    const data = await DocumentModel.findAll({
+      limit,
+      offset,
+      raw: true,
+      attributes: { exclude: ['file'] },
+    });
     const total = await DocumentModel.count();
     return {
       offset,
@@ -31,6 +36,7 @@ export const documentsService = {
       limit,
       offset,
       raw: true,
+      attributes: { exclude: ['file'] },
     });
     const total = await DocumentModel.count();
     return {
@@ -39,6 +45,23 @@ export const documentsService = {
       total,
       data,
     };
+  },
+
+  async getById(
+    id: number,
+  ): Promise<InferAttributes<DocumentModel> | undefined> {
+    return await DocumentModel.findByPk(id, {
+      raw: true,
+      attributes: { exclude: ['file'] },
+    });
+  },
+
+  async getFileById(id: number): Promise<Buffer | undefined> {
+    const document = await DocumentModel.findByPk(id, {
+      raw: true,
+      attributes: ['file'],
+    });
+    return document?.file;
   },
 
   async create(

@@ -20,24 +20,26 @@ export const connection = new Sequelize({
 });
 
 const handlers = {
+  async [TaskName.CONTINUE](job: Job) {
+    const sources = await crawlerService.continue();
+
+    return sources.length;
+  },
+
   async [TaskName.CHECK](job: Job) {
-    const sources = await crawlerService.checkSources();
+    const sources = await crawlerService.check();
 
-    await Promise.all(sources.map(({ id }) => queueService.refresh(id)));
-
-    return sources;
+    return sources.length;
   },
 
   async [TaskName.REFRESH](job: Job) {
     const { source_id } = job.data as RefreshPayload;
 
-    const documents = await crawlerService.refreshSource(
-      source_id,
-      500,
-      (progress) => job.updateProgress(progress),
+    const documents = await crawlerService.refresh(source_id, 500, (progress) =>
+      job.updateProgress(progress),
     );
 
-    documents.length;
+    return documents.length;
   },
 };
 

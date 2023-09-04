@@ -4,6 +4,9 @@ import { sourceCreateSchema } from '../dto/source-create.dto';
 import { sourceUpdateSchema } from '../dto/source-update.dto';
 import { sourcePageableSchema } from '../dto/source-pageable.dto';
 import { sourceSchema } from '../dto/source.dto';
+import { documentsService } from '../../documents/services/documents.service';
+import { documentSchema } from '../../documents/dto/document.dto';
+import { documentsController } from '../../documents/controllers/documents.controller';
 
 export const sourcesController = new Router();
 
@@ -18,6 +21,20 @@ sourcesController.get('/sources', async (ctx) => {
   ctx.body = sourcePageableSchema.validate(pageable, {
     stripUnknown: true,
   }).value;
+  ctx.status = 200;
+});
+
+sourcesController.get('/sources/:sourceId', async (ctx) => {
+  const { sourceId } = ctx.params;
+  if (!(await sourcesService.existsById(Number(sourcesService)))) {
+    ctx.body = 'Source not found';
+    ctx.status = 404;
+    return;
+  }
+
+  const source = await sourcesService.getById(Number(sourceId));
+
+  ctx.body = sourceSchema.validate(source, { stripUnknown: true });
   ctx.status = 200;
 });
 

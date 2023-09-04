@@ -6,33 +6,52 @@ import { InferAttributes } from 'sequelize';
 import { documentsService } from '../../documents/services/documents.service';
 import { documentCreateConvertor } from '../convertors/document-create.convertor';
 import { Job } from 'bullmq';
+import { queueService } from './queue.service';
 
 export const crawlerService = {
-  async checkSources(): Promise<InferAttributes<SourceModel>[]> {
-    const { data: sources } = await sourcesService.getAll();
+  async continue(): Promise<InferAttributes<SourceModel>[]> {
+    const sources = await sourcesService.getAllByRefreshing(true);
 
-    const needRefreshSources: InferAttributes<SourceModel>[] = [];
-    for (const source of sources) {
-      const { total } = await beckmanService.getAll(source.url, 0, 1);
-      if (!source.refreshing && total > (source.total ?? 0)) {
-        needRefreshSources.push(source);
-      }
-    }
+    const candidates: InferAttributes<SourceModel>[] = [];
+    await Promise.all(
+      sources.map(async (source) => {
+        const { total } = await beckmanService.getAll(source.path, 0, 1);
+        if (total > (source.total ?? 0)) {
+          candidates.push(source);
+        }
+      }),
+    );
 
-    return needRefreshSources;
+    await Promise.all(candidates.map(({ id }) => queueService.refresh(id)));
+
+    return candidates;
   },
 
-  async refreshSource(
+  async check(): Promise<InferAttributes<SourceModel>[]> {
+    const sources = await sourcesService.getAllByRefreshing(false);
+
+    const candidates: InferAttributes<SourceModel>[] = [];
+    await Promise.all(
+      sources.map(async (source) => {
+        const { total } = await beckmanService.getAll(source.path, 0, 1);
+        if (total > (source.total ?? 0)) {
+          candidates.push(source);
+        }
+      }),
+    );
+
+    await Promise.all(candidates.map(({ id }) => queueService.refresh(id)));
+
+    return candidates;
+  },
+
+  async refresh(
     sourceId: number,
     batchSize: number = 500,
     progressFn?: (progress: number) => void | Promise<void>,
   ): Promise<InferAttributes<DocumentModel>[]> {
     const source = await sourcesService.getById(sourceId);
-    const beckman = await beckmanService.getAll(source.url, 0, 1);
-
-    if (source.refreshing) {
-      return [];
-    }
+    const beckman = await beckmanService.getAll(source.path, 0, 1);
 
     await sourcesService.startRefreshing(sourceId);
 
@@ -42,7 +61,7 @@ export const crawlerService = {
     const added: InferAttributes<DocumentModel>[] = [];
     for (let page = first; page <= last; page++) {
       const { results } = await beckmanService.getAll(
-        source.url,
+        source.path,
         page,
         batchSize,
       );
@@ -50,16 +69,26 @@ export const crawlerService = {
         .map(documentCreateConvertor.fromBeckmanDocument)
         .map((d) => ({ ...d, source_id: sourceId }));
 
-      const candidates =
-        page === 0 ? documents.slice(source.total % batchSize) : documents;
-      const created = await documentsService.createMany(candidates);
+      const candidates = documents.slice(
+        page === first ? source.total % batchSize : null,
+        page === last ? beckman.total % batchSize : null,
+      );
+
+      const downloaded = await Promise.all(
+        candidates.map(async (candidate) => ({
+          ...candidate,
+          file: await beckmanService.getFile(candidate.external_id),
+        })),
+      );
+
+      const created = await documentsService.createMany(downloaded);
       added.push(...created);
 
       await sourcesService.setTotal(sourceId, source.total + added.length);
 
       const progress =
         Math.round(((page - first + 1) / (last - first + 1)) * 1000) / 1000;
-      await progressFn(progress);
+      await progressFn?.(progress);
     }
 
     await sourcesService.finishRefreshing(sourceId);
