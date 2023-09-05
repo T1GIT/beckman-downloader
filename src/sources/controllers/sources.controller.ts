@@ -26,7 +26,7 @@ sourcesController.get('/sources', async (ctx) => {
 
 sourcesController.get('/sources/:sourceId', async (ctx) => {
   const { sourceId } = ctx.params;
-  if (!(await sourcesService.existsById(Number(sourcesService)))) {
+  if (!(await sourcesService.existsById(Number(sourceId)))) {
     ctx.body = 'Source not found';
     ctx.status = 404;
     return;

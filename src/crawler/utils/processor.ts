@@ -23,23 +23,21 @@ const handlers = {
   async [TaskName.CONTINUE](job: Job) {
     const sources = await crawlerService.continue();
 
-    return sources.length;
+    return { sourceIds: sources.map(({ id }) => id) };
   },
 
   async [TaskName.CHECK](job: Job) {
     const sources = await crawlerService.check();
 
-    return sources.length;
+    return { sourceIds: sources.map(({ id }) => id) };
   },
 
   async [TaskName.REFRESH](job: Job) {
     const { source_id } = job.data as RefreshPayload;
 
-    const documents = await crawlerService.refresh(source_id, 500, (progress) =>
-      job.updateProgress(progress),
-    );
+    const documents = await crawlerService.refresh(source_id, job);
 
-    return documents.length;
+    return { documentIds: documents.map(({ id }) => id) };
   },
 };
 

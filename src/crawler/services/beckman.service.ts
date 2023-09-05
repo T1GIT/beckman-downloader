@@ -24,13 +24,16 @@ export const beckmanService = {
         type: 'tech-docs',
       },
     });
-    return data;
+    return typeof data === 'string' ? JSON.parse(data) : data;
   },
 
-  async getFile(id: string): Promise<Buffer> {
-    const { data } = await beckmanAxios.get<ArrayBuffer>(`/download/${id}`, {
-      responseType: 'arraybuffer',
-    });
+  async getFile(id: string, name: string): Promise<Buffer> {
+    const { data } = await beckmanAxios.get<ArrayBuffer>(
+      `/download/file/${id}/${name}`,
+      {
+        responseType: 'arraybuffer',
+      },
+    );
     return Buffer.from(data);
   },
 };

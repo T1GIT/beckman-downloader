@@ -23,7 +23,7 @@ documentsController.get('/documents', async (ctx) => {
 
 documentsController.get('/documents/:documentId', async (ctx) => {
   const { documentId } = ctx.params;
-  if (!(await documentsService.existsById(Number(documentsService)))) {
+  if (!(await documentsService.existsById(Number(documentId)))) {
     ctx.body = 'Document not found';
     ctx.status = 404;
     return;
@@ -31,13 +31,13 @@ documentsController.get('/documents/:documentId', async (ctx) => {
 
   const document = await documentsService.getById(Number(documentId));
 
-  ctx.body = documentSchema.validate(document, { stripUnknown: true });
+  ctx.body = documentSchema.validate(document, { stripUnknown: true }).value;
   ctx.status = 200;
 });
 
 documentsController.get('/documents/:documentId/file', async (ctx) => {
   const { documentId } = ctx.params;
-  if (!(await documentsService.existsById(Number(documentsService)))) {
+  if (!(await documentsService.existsById(Number(documentId)))) {
     ctx.body = 'Document not found';
     ctx.status = 404;
     return;
@@ -46,8 +46,8 @@ documentsController.get('/documents/:documentId/file', async (ctx) => {
   const document = await documentsService.getById(Number(documentId));
   const file = await documentsService.getFileById(Number(documentId));
 
-  ctx.attachment(`${document.external_id}.pdf`);
-  ctx.body = Readable.from(file);
+  ctx.attachment(`${document.document_number}.pdf`);
+  ctx.body = file;
   ctx.status = 200;
 });
 

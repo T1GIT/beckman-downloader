@@ -10,7 +10,7 @@ const queue = new Queue(QueueName.CRAWLER, { connection: connectionOptions });
 export const queueService = {
   async watch(): Promise<void> {
     const client = await queue.client;
-    client.on('ready', () => queueService.watch());
+    client.once('ready', () => queueService.watch());
 
     await queue.add(TaskName.CONTINUE, undefined);
 
@@ -23,7 +23,15 @@ export const queueService = {
   },
 
   async refresh(sourceId: number): Promise<void> {
-    const payload: RefreshPayload = { source_id: sourceId };
-    await queue.add(TaskName.REFRESH, payload);
+    const jobs = await queue.getActive();
+    const exists = jobs.some(
+      ({ name, data }) =>
+        name === TaskName.REFRESH && data.source_id === sourceId,
+    );
+
+    if (!exists) {
+      const payload: RefreshPayload = { source_id: sourceId };
+      await queue.add(TaskName.REFRESH, payload);
+    }
   },
 };
