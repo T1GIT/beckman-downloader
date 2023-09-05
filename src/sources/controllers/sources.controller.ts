@@ -34,7 +34,7 @@ sourcesController.get('/sources/:sourceId', async (ctx) => {
 
   const source = await sourcesService.getById(Number(sourceId));
 
-  ctx.body = sourceSchema.validate(source, { stripUnknown: true });
+  ctx.body = sourceSchema.validate(source, { stripUnknown: true }).value;
   ctx.status = 200;
 });
 
@@ -47,7 +47,7 @@ sourcesController.post('/sources', async (ctx) => {
   }
 
   const created = await sourcesService.create(result.value);
-  ctx.body = sourceSchema.validate(created, { stripUnknown: true });
+  ctx.body = sourceSchema.validate(created, { stripUnknown: true }).value;
   ctx.status = 201;
 });
 
@@ -62,7 +62,7 @@ sourcesController.put('/sources/:sourceId', async (ctx) => {
   const { sourceId } = ctx.params;
   const updated = await sourcesService.update(Number(sourceId), result.value);
 
-  ctx.body = sourceSchema.validate(updated, { stripUnknown: true });
+  ctx.body = sourceSchema.validate(updated, { stripUnknown: true }).value;
   ctx.status = 200;
 });
 

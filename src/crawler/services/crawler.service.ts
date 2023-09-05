@@ -15,7 +15,7 @@ async function refreshSources(
   await Promise.all(
     sources.map(async (source) => {
       const { total } = await beckmanService.getAll(source.path, 0, 1);
-      if (total > (source.total ?? 0)) {
+      if (total > source.total) {
         candidates.push(source);
       }
     }),
@@ -78,7 +78,7 @@ export const crawlerService = {
     sourceId: number,
     job?: Job,
   ): Promise<InferAttributes<DocumentModel>[]> {
-    const batch = 100;
+    const batch = 20;
 
     const source = await sourcesService.getById(sourceId);
     const { total } = await beckmanService.getAll(source.path, 0, 1);

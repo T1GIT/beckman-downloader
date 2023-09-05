@@ -12,8 +12,8 @@ export class SourceModel extends Model<SourceModel, Pick<SourceModel, 'path'>> {
   @Column({ allowNull: false })
   path: string;
 
-  @Column
-  total?: number;
+  @Column({ allowNull: false, defaultValue: 0 })
+  total: number;
 
   @Column({ defaultValue: false })
   refreshing: boolean;

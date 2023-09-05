@@ -40,7 +40,7 @@ export const sourcesService = {
   async create(
     createDto: SourceCreateDto,
   ): Promise<InferAttributes<SourceModel>> {
-    const created = await SourceModel.create(createDto);
+    const created = await SourceModel.create({ ...createDto });
     await queueService.refresh(created.id);
     return created.toJSON();
   },
